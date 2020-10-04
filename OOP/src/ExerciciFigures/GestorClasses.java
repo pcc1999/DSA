@@ -37,8 +37,8 @@ public class GestorClasses
 
         System.out.println("Resultat de la suma d'arees: " + r);
 
-        System.out.println(Arrays.asList(v));
+        System.out.println("Figures sense ordenar: " + Arrays.asList(v));
         GestorClasses.sort(v);
-        System.out.println(Arrays.asList(v));
+        System.out.println("Figures ordenades per nom i area: " + Arrays.asList(v));
     }
 }
