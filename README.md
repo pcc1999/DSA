@@ -1,3 +1,3 @@
-# OOP Figures geomètriques
+# Disseny de serveis i aplicacions
 
-Primer exercici de figures geomètriques (polimorfisme) i persones (herències)
+Col·lecció d'exercicis fets durant el curs
