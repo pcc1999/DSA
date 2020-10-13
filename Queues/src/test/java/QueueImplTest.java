@@ -1,4 +1,5 @@
 package test.java;
+import main.java.FullQueueException;
 import main.java.Queue;
 import main.java.QueueImpl;
 import org.junit.After;
@@ -37,7 +38,37 @@ public class QueueImplTest
     @Test
     public void TestPush2() throws Exception
     {
+        Assert.assertEquals(4, this.q.size());
+        this.q.push("4");
+        Assert.assertEquals(4, this.q.size());
+    }
+
+    @Test
+    public void TestPush3() throws Exception
+    {
         Assert.assertEquals(3, this.q.size());
+        this.q.push("4");
+        this.q.push("5");
+        this.q.push("6");
+        Assert.assertEquals(6, this.q.size());
+    }
+
+    @Test
+    public void TestPop1() throws Exception
+    {
+        this.q.pop();
+        this.q.pop();
+        this.q.pop();
+        this.q.pop();
+        Assert.assertEquals(-1, this.q.size());
+    }
+
+    @Test
+    public void TestPop2() throws Exception
+    {
+        this.q.pop();
+        this.q.pop();
+        Assert.assertEquals(2, this.q.size());
     }
 
 }
