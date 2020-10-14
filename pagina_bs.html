@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	  <title>Bootstrap Example</title>
+	  <meta charset="utf-8">
+	  <meta name="viewport" content="width=device-width, initial-scale=1">
+	  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+	</head>
+	<body>
+		<div class="form-group">
+			<label for="usr">Github user:</label>
+			<input type="text" id="usr">
+			<button onclick="myFunction(document.getElementById('usr').value)">Submit</button>
+		</div>
+		<div>
+		<h2 id = "titol_taula" style="text-align: center;">
+		</h2>
+		<div class="container">
+			<table class="table table-hover" id="taula">
+			<thead>
+			  <tr>
+				<th>Name</th>
+				<th>Description</th>
+				<th>Number of followers</th>
+			  </tr>
+			</thead>
+			<tbody>
+				<id="contingut_taula">
+			</tbody>
+		  </table>
+		</div>
+		<script>
+			function myFunction(username) 
+			{
+				var url = "http://api.github.com/users/" + username + "/repos";
+				$.get(url, function(data, status)
+				{
+					var num_repos = data.length;
+					if (num_repos != 0)
+					{
+						var table = document.getElementById('taula');
+						var rowCount = table.rows.length;
+						for (var i = 0; rowCount > 1; i++)
+						{
+							table.deleteRow(rowCount - 1);
+							rowCount--;
+						}
+						document.getElementById('titol_taula').innerHTML = username + "'s repositories";
+						for(var i = 0; i < num_repos; i++)
+						{
+							var fila = "<tr><td>" + data[i].name + "<td>" + data[i].description + "<td>" + data[i].stargazers_count;
+							var row = table.insertRow(-1);
+							row.innerHTML = fila;
+						}
+						
+					}
+					else if (num_repos == 0)
+					{
+						alert("No repositories found for the user " + username + ".\nPlease, check the username.");
+					}
+				})
+			}
+		</script>
+	</body>
+</html>
