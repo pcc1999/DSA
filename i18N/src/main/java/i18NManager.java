@@ -28,18 +28,5 @@ public class i18NManager
         resultat = this.data.get(language).getString(key);
         return resultat;
     }
-
-    public static void main(String[] args)
-    {
-        String msg1 = i18NManager.getInstance("it").getText("it", "l2");
-        //String msg2 = i18NManager.getInstance("es").getText("es", "l2");
-/*        String msg3 = i18NManager.getInstance().getText("en", "l1");
-
-        String msg4 = i18NManager.getInstance().getText("ca", "l2");
-        String msg5 = i18NManager.getInstance().getText("es", "l2");
-        String msg6 = i18NManager.getInstance().getText("en", "l2");*/
-
-        System.out.println(msg1);
-        //System.out.println(msg2);
-    }
+    
 }
