@@ -1,6 +1,5 @@
 //Singleton
 
-import javax.naming.ldap.PagedResultsResponseControl;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
@@ -27,7 +26,7 @@ public class I18NManager
     public String getText(String language, String key)
     {
         logger.info("language: " + language + ". key: " + key);
-        String resultat = null;
+        String resultat;
         ResourceBundle rb = this.data.get(language);
         if (rb==null)
         {
