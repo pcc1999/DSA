@@ -153,8 +153,8 @@ public class MainActivity extends AppCompatActivity {
     public void onComaClick(View v)
     {
         String numero = getNumero();
-        String[] trozos = numero.split(".");
-        if (trozos.length == 0)
+        String[] trozos = numero.split("\\.");
+        if (trozos.length == 1)
         {
             añadirElementoARes(".");
             añadirElementoAHist(".");
