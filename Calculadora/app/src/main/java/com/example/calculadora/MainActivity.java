@@ -14,6 +14,7 @@ public class MainActivity extends AppCompatActivity {
     float anteriorNumero;
     String operacion;
     String angUnits;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,15 +23,24 @@ public class MainActivity extends AppCompatActivity {
         this.angUnits = "rad";
     }
     //Botones Opciones
-    public void onPorcentajeClick(View v)
+    public void onParentesisClick(View v)
     {
-        TextView texto = (TextView)findViewById(R.id.txtRes);
-        String txtNum = getNumero();
-        Log.d("INFO", txtNum);
-        Log.d("INFO", "Aplico porcentaje: " + txtNum + "%");
-        float numero = Float.parseFloat(txtNum) / 100;
-        cambiarNumeroRes(Float.toString(numero));
-        this.operacion = "porcentaje";
+        try
+        {
+            String[] trozos = getLineaRes().split(" ");
+            if(esTrigonometrica(trozos[0]))
+            {
+                float resultado = hacerTrigonometrica(trozos[0], Float.parseFloat(trozos[1]));
+                añadirElementoAHist(")");
+                borrarLineaRes();
+                añadirElementoARes(Float.toString(resultado));
+                if(this.operacion != null)
+                {
+                    findViewById(R.id.btnIgual).performClick();
+                }
+            }
+        }
+        catch (Exception ignored){}
     }
     public void onAngUnitsClick(View v)
     {
@@ -58,8 +68,8 @@ public class MainActivity extends AppCompatActivity {
             temp.setActivated(true);
             sign = "-";
             TextView texto = (TextView)findViewById(R.id.txtRes);
-            String resultado = texto.getText().toString();
-            texto.setText("-"+resultado);
+            String resultado = "-" + texto.getText().toString();
+            texto.setText(resultado);
         }
         else if (temp.isActivated())
         {
@@ -74,8 +84,11 @@ public class MainActivity extends AppCompatActivity {
     //Botones Operaciones
     public void onSumaRestaMultiDivClick(View v)
     {
-        TextView texto = (TextView)findViewById(R.id.txtRes);
-        this.anteriorNumero = Float.parseFloat(getNumero());
+        if(this.operacion != null)
+        {
+            findViewById(R.id.btnIgual).performClick();
+        }
+        this.anteriorNumero = Float.parseFloat(getLineaRes());
         Button operacionSeleccionada = (Button) v;
         this.operacion = operacionSeleccionada.getText().toString();
         añadirElementoAHist(this.operacion);
@@ -85,19 +98,16 @@ public class MainActivity extends AppCompatActivity {
     {
         añadirElementoARes("sin ");
         añadirElementoAHist("sin(");
-        this.operacion = "sin";
     }
     public void onCosClick(View v)
     {
         añadirElementoARes("cos ");
         añadirElementoAHist("cos(");
-        this.operacion = "cos";
     }
     public void onTanClick(View v)
     {
         añadirElementoARes("tan ");
         añadirElementoAHist("tan(");
-        this.operacion = "tan";
     }
     //Botones finales
     public void onBorrarClick(View v)
@@ -110,24 +120,12 @@ public class MainActivity extends AppCompatActivity {
     }
     public void onEqualClick(View v)
     {
-        if(this.operacion == "tan" || this.operacion == "sin" || this.operacion == "cos")
-        {
-            String divisor = " ";
-            String[] introducido = getNumero().split(divisor);
-            Float numero = Float.parseFloat(introducido[1]);
-            float res = comprobarOperacion(numero);
-            borrarLineaRes();
-            añadirElementoARes(Float.toString(res));
-            añadirElementoAHist(")");
-        }
-        else
-        {
-            float introducido = Float.parseFloat(getNumero());
-            borrarLineaRes();
-            String resultado = Float.toString(comprobarOperacion(introducido));
-            añadirElementoARes(resultado);
-            Log.d("RES", "Resultado de " + this.anteriorNumero + " " + this.operacion + " " + introducido + " es " + resultado);
-        }
+        float introducido = Float.parseFloat(getLineaRes());
+        borrarLineaRes();
+        String resultado = Float.toString(hacerOperacion(introducido));
+        arreglarDecimal(resultado);
+        añadirElementoARes(resultado);
+        Log.d("RES", "Resultado de " + this.anteriorNumero + " " + this.operacion + " " + introducido + " es " + resultado);
         this.operacion = null;
     }
     //Numeros
@@ -136,23 +134,12 @@ public class MainActivity extends AppCompatActivity {
         Button pulsado = (Button) v;
         String numero = pulsado.getText().toString();
         Log.d("INFO BUTTON", "Numero pulsado: " + numero);
-        if(this.operacion == "porcentaje")
-        {
-            float res = Float.parseFloat(getNumero()) * Float.parseFloat(numero);
-            cambiarNumeroRes(null);
-            añadirElementoARes(Float.toString(res));
-            añadirElementoAHist(Float.toString(res));
-            this.operacion = null;
-        }
-        else
-        {
-            añadirElementoARes(numero);
-            añadirElementoAHist(numero);
-        }
+        añadirElementoARes(numero);
+        añadirElementoAHist(numero);
     }
     public void onComaClick(View v)
     {
-        String numero = getNumero();
+        String numero = getLineaRes();
         String[] trozos = numero.split("\\.");
         if (trozos.length == 1)
         {
@@ -166,12 +153,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //Metodos
-    public String getNumero()
+    public String getLineaRes()
     {
-        String numero;
+        String linea;
         TextView texto = (TextView)findViewById(R.id.txtRes);
-        numero = texto.getText().toString();
-        return numero;
+        linea = texto.getText().toString();
+        return linea;
+    }
+    public String getLineaHist()
+    {
+        String linea;
+        TextView texto = (TextView)findViewById(R.id.txtHist);
+        linea = texto.getText().toString();
+        return linea;
     }
     public void añadirElementoARes(String elemento)
     {
@@ -209,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
     public String arreglarDecimal(String decimal)
     {
         //Separo parte entera de parte decimal
-        if(!decimal.equals("sin ")&&!decimal.equals("cos ")&&!decimal.equals("tan "))
+        if(!esTrigonometrica(decimal.split(" ")[0]))
         {
             float numero = Float.parseFloat(decimal);
             int parteEntera = (int) numero;
@@ -226,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
             return decimal;
         }
     }
-    public float comprobarOperacion(float numeroIntroducido)
+    public float hacerOperacion(float numeroIntroducido)
     {
         float numeroResultado = this.anteriorNumero;
         if (this.operacion.equals("+"))
@@ -245,7 +239,12 @@ public class MainActivity extends AppCompatActivity {
         {
             numeroResultado = this.anteriorNumero / numeroIntroducido;
         }
-        else if (this.operacion.equals("sin"))
+        return numeroResultado;
+    }
+    public float hacerTrigonometrica(String operador, float numeroIntroducido)
+    {
+        float numeroResultado = numeroIntroducido;
+        if (operador.equals("sin"))
         {
             if(angUnits.equals("rad"))
             {
@@ -256,7 +255,7 @@ public class MainActivity extends AppCompatActivity {
                 numeroResultado = (float)(Math.sin(numeroIntroducido*Math.PI/180));
             }
         }
-        else if (this.operacion.equals("cos"))
+        else if (operador.equals("cos"))
         {
             if(angUnits.equals("rad"))
             {
@@ -267,7 +266,7 @@ public class MainActivity extends AppCompatActivity {
                 numeroResultado = (float)(Math.cos(numeroIntroducido*Math.PI/180));
             }
         }
-        else if (this.operacion.equals("tan"))
+        else if (operador.equals("tan"))
         {
             if(angUnits.equals("rad"))
             {
@@ -278,11 +277,17 @@ public class MainActivity extends AppCompatActivity {
                 numeroResultado = (float)(Math.tan(numeroIntroducido*Math.PI/180));
             }
         }
-        else if (this.operacion.equals("porcentaje"))
-        {
-            añadirElementoARes("%×");
-            numeroResultado = this.anteriorNumero * numeroIntroducido;
-        }
         return numeroResultado;
+    }
+    public boolean esTrigonometrica(String operador)
+    {
+        try
+        {
+            return operador.equals("sin") || operador.equals("cos") || operador.equals("tan");
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
     }
 }

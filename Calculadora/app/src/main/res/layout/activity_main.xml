@@ -256,10 +256,10 @@
         android:textStyle="bold"
         app:cornerRadius="70dp"
         app:layout_constraintBottom_toTopOf="@+id/btnCos"
-        app:layout_constraintEnd_toStartOf="@+id/btnPorcentaje" />
+        app:layout_constraintEnd_toStartOf="@+id/btnParentesis" />
 
     <Button
-        android:id="@+id/btnPorcentaje"
+        android:id="@+id/btnParentesis"
         style="@style/Widget.MaterialComponents.Button"
         android:layout_width="70dp"
         android:layout_height="70dp"
@@ -269,8 +269,8 @@
         android:fontFamily="sans-serif-condensed-light"
         android:insetTop="0dp"
         android:insetBottom="0dp"
-        android:onClick="onPorcentajeClick"
-        android:text="@string/percentage"
+        android:onClick="onParentesisClick"
+        android:text="@string/closeParenthesis"
         android:textColor="#FFFFFF"
         android:textSize="26sp"
         android:textStyle="bold"

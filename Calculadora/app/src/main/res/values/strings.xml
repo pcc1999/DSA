@@ -24,4 +24,5 @@
     <string name="grados">deg</string>
     <string name="coseno">cos</string>
     <string name="CambioSigno">+/-</string>
+    <string name="closeParenthesis">)</string>
 </resources>
