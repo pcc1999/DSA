@@ -1,9 +1,11 @@
 package edu.upc.dsa;
 
 import edu.upc.dsa.models.Brote;
+import edu.upc.dsa.models.Caso;
 import org.apache.log4j.Logger;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -18,6 +20,22 @@ public class Covid19ManagerImpl implements Covid19Manager
         this.tablaBrotes = new HashMap<Integer, Brote>();
     }
 
+    public static Covid19Manager getInstance()
+    {
+        if(instance==null)
+        {
+            instance = new Covid19ManagerImpl();
+        }
+        return instance;
+    }
+
+    @Override
+    public List<Brote> findAll() {
+        List<Brote> list = new LinkedList<Brote>(tablaBrotes.values());
+        logger.info(list);
+        return list;
+    }
+
     @Override
     public Brote anadirBrote(Brote nuevo)
     {
@@ -29,6 +47,13 @@ public class Covid19ManagerImpl implements Covid19Manager
     }
 
     @Override
+    public void anadirCasoBrote(int ID, Caso introducir) {
+        Brote modificar = this.getBrote(0);
+        modificar.addCaso(introducir);
+        this.updateBrote(0, modificar);
+    }
+
+    @Override
     public Brote getBrote(int ID)
     {
         Brote encontrado = this.tablaBrotes.get(ID);
@@ -36,11 +61,6 @@ public class Covid19ManagerImpl implements Covid19Manager
         return encontrado;
     }
 
-    @Override
-    public List<Brote> findAll()
-    {
-        return null;
-    }
 
     @Override
     public void borrarBrote(int ID)
@@ -49,9 +69,10 @@ public class Covid19ManagerImpl implements Covid19Manager
     }
 
     @Override
-    public Brote updateBrote(Brote nuevo)
+    public Brote updateBrote(int ID, Brote nuevo)
     {
-        return null;
+        this.tablaBrotes.replace(ID, nuevo);
+        return nuevo;
     }
 
     @Override
@@ -60,5 +81,10 @@ public class Covid19ManagerImpl implements Covid19Manager
         int ret = tablaBrotes.size();
         logger.info("size " + ret);
         return ret;
+    }
+    public void clear()
+    {
+        tablaBrotes.clear();
+        instance = null;
     }
 }

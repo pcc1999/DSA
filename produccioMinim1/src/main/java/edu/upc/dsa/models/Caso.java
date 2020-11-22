@@ -136,7 +136,6 @@ public class Caso implements Comparable<Caso>
 
     @Override
     public int compareTo(Caso o) {
-        //return this.getFechaInforme().compareTo(o.getFechaInforme());
-        return o.getFechaInforme().compareTo((this.getFechaInforme()));
+        return -(int)o.getFechaInforme().compareTo((this.getFechaInforme()));
     }
 }
