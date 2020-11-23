@@ -1,8 +1,7 @@
 package edu.upc.dsa.services;
 
 
-import edu.upc.dsa.Covid19Manager;
-import edu.upc.dsa.Covid19ManagerImpl;
+import edu.upc.dsa.*;
 import edu.upc.dsa.models.Brote;
 import edu.upc.dsa.models.Caso;
 import io.swagger.annotations.Api;
@@ -17,34 +16,22 @@ import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
 
-@Api(value = "/tracks", description = "Endpoint to Track Service")
-@Path("/tracks")
-public class Covid19Service {
+import static edu.upc.dsa.Covid19ManagerImpl.getInstance;
 
-    private Covid19Manager cm;
-
-    public Covid19Service() {
-        this.cm = Covid19ManagerImpl.getInstance();
-        if (cm.size()==0) {
-            Caso caso0 = new Caso("Ákos", "Schneider", "1998/11/21", "2020/11/21", "Medio", "Hombre", "akos.schneider@estudiantat.upc.edu", 928363722, "Resi", "Confirmado");
-            Caso caso1 = new Caso("Toni", "Mur García", "1999/2/26", "2020/11/17", "Alto", "Hombre", "toni.tur@estudiantat.upc.edu", 826382627, "Badal", "No Caso");
-            Brote nuevo = new Brote();
-            nuevo.addCaso(caso0);
-            nuevo.addCaso(caso1);
-            this.cm.anadirBrote(nuevo);
-        }
-    }
+@Api(value = "/services", description = "Endpoint to Covid-19 Management Service")
+@Path("/covid19")
+public class RestService {
 
     @GET
     @ApiOperation(value = "get all Brotes", notes = "asdasd")
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Successful", response = Brote.class, responseContainer="List"),
     })
-    @Path("/")
+    @Path("/getAllBrotes")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getBrotes() {
 
-        List<Brote> brotes = this.cm.findAll();
+        List<Brote> brotes = getInstance().findAll();
 
         GenericEntity<List<Brote>> entity = new GenericEntity<List<Brote>>(brotes) {};
         return Response.status(201).entity(entity).build()  ;
@@ -57,10 +44,10 @@ public class Covid19Service {
             @ApiResponse(code = 201, message = "Successful", response = Brote.class),
             @ApiResponse(code = 404, message = "Brote not found")
     })
-    @Path("/{id}")
+    @Path("/getBrote/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getBrote(@PathParam("id") int id) {
-        Brote b = this.cm.getBrote(id);
+    public Response getBrote(@PathParam("id") int id) throws ExceptionBroteNotFound {
+        Brote b = getInstance().getBrote(id);
         if (b == null) return Response.status(404).build();
         else  return Response.status(201).entity(b).build();
     }
@@ -72,30 +59,28 @@ public class Covid19Service {
             @ApiResponse(code = 404, message = "Brote not found")
     })
     @Path("/{id}")
-    public Response borrarBrote(@PathParam("id") int id) {
-        Brote b = this.cm.getBrote(id);
+    public Response borrarBrote(@PathParam("id") int id) throws ExceptionBroteNotFound{
+        Brote b = getInstance().getBrote(id);
         if (b == null) return Response.status(404).build();
-        else this.cm.borrarBrote(id);
+        else getInstance().borrarBrote(id);
         return Response.status(201).build();
     }
-
-    @PUT
+/*
+    @POST
     @ApiOperation(value = "update a Brote", notes = "asdasd")
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Successful"),
-            @ApiResponse(code = 404, message = "Track not found")
+            @ApiResponse(code = 404, message = "Brote not found")
     })
-    @Path("/")
-    public Response updateBrote(Brote brote, int id) {
+    @Path("/updateBrote/{ID}")
+    public Response updateBrote(@PathParam("Brote") Brote brote,@PathParam("ID") int id) throws ExceptionBroteNotFound{
 
-        Brote b = this.cm.updateBrote(id, brote);
+        Brote b = getInstance().updateBrote(id, brote);
 
         if (b == null) return Response.status(404).build();
 
         return Response.status(201).build();
     }
-
-
 
     @POST
     @ApiOperation(value = "create a new Brote", notes = "asdasd")
@@ -105,15 +90,15 @@ public class Covid19Service {
 
     })
 
-    @Path("/")
+    @Path("/{Brote}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response newBrote(Brote brote) {
+    public Response newBrote(@PathParam("Brote") Brote brote) {
 
         if (brote.getNumCasos()==0)  return Response.status(500).entity(brote).build();
-        this.cm.anadirBrote(brote);
+        getInstance().anadirBrote(brote);
         return Response.status(201).entity(brote).build();
     }
-
+*/
     @POST
     @ApiOperation(value = "adds a new Caso in a Brote", notes = "asdasd")
     @ApiResponses(value = {
@@ -122,12 +107,21 @@ public class Covid19Service {
 
     })
 
-    @Path("/")
+    @Path("/nuevoCaso/{ID}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response newCasoEnBrote(int ID, Caso nuevo) {
-
+    public Response newCaso(@PathParam("ID") int ID, Caso nuevo) throws ExceptionBroteNotFound {
+        String nombre = nuevo.getNombre();
+        String apellidos = nuevo.getApellidos();
+        String informe = nuevo.getFechaInforme();
+        String nacimiento = nuevo.getFechaNacimiento();
+        String clasificacion = nuevo.getClasificacion();
+        String genero = nuevo.getGenero();
+        String nivelRiesgo = nuevo.getNivelRiesgo();
+        String mail = nuevo.getCorreoElectronico();
+        int telf = nuevo.getTelf();
+        String direccion = nuevo.getDireccion();
         if (nuevo.getFechaInforme().equals("") || nuevo.getApellidos().equals("") || nuevo.getClasificacion().equals("") || nuevo.getCorreoElectronico().equals("") || nuevo.getDireccion().equals("") || nuevo.getFechaNacimiento().equals("") || nuevo.getGenero().equals("") || nuevo.getNivelRiesgo().equals("") || nuevo.getNombre().equals("") || nuevo.getTelf()==0)  return Response.status(500).entity(nuevo).build();
-        this.cm.anadirCasoBrote(ID,nuevo);
+        getInstance().anadirCasoBrote(ID,nuevo);
         return Response.status(201).entity(nuevo).build();
     }
 

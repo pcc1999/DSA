@@ -71,7 +71,8 @@ public class Covid19ManagerImpl implements Covid19Manager
     @Override
     public Brote updateBrote(int ID, Brote nuevo)
     {
-        this.tablaBrotes.replace(ID, nuevo);
+        this.tablaBrotes.remove(ID);
+        this.tablaBrotes.put(ID, nuevo);
         return nuevo;
     }
 
