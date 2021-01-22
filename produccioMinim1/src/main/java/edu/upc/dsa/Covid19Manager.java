@@ -8,7 +8,7 @@ public interface Covid19Manager
 {
     public List<Brote> findAll();
     public Brote anadirBrote(Brote nuevo);
-    public void anadirCasoBrote(int ID, Caso Introducir);
+    public void anadirCasoBrote(int ID, Caso Introducir) throws BroteNotFoundException;
     public Brote getBrote(int ID);
     public void borrarBrote(int ID);
     public Brote updateBrote(int ID, Brote nuevo);

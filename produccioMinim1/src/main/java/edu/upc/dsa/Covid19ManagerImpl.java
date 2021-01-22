@@ -47,10 +47,17 @@ public class Covid19ManagerImpl implements Covid19Manager
     }
 
     @Override
-    public void anadirCasoBrote(int ID, Caso introducir) {
+    public void anadirCasoBrote(int ID, Caso introducir) throws BroteNotFoundException {
         Brote modificar = this.getBrote(0);
-        modificar.addCaso(introducir);
-        this.updateBrote(0, modificar);
+        if(modificar!=null)
+        {
+            modificar.addCaso(introducir);
+            this.updateBrote(0, modificar);
+        }
+        else
+        {
+            throw new BroteNotFoundException();
+        }
     }
 
     @Override

@@ -9,12 +9,12 @@ public class Caso implements Comparable<Caso>
     int ID;
     String fechaNacimiento;           // Formato yyyy/mm/dd
     String fechaInforme;              // Formato yyyy/mm/dd
-    String nivelRiesgo;             // Alto, medio o bajo
+    String nivelRiesgo;               // Alto, medio o bajo
     String genero;
     String correoElectronico;
     int telf;
     String direccion;
-    String clasificacion;           // Sospechoso, confirmado o no caso
+    String clasificacion;             // Sospechoso, confirmado o no caso
 
     public Caso(String nombre, String apellidos, String fechaNacimiento, String fechaInforme, String nivelRiesgo, String genero, String correoElectronico, int telf, String direccion, String clasificacion) {
         this.nombre = nombre;
